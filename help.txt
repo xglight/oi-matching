@@ -1,0 +1,15 @@
+对拍器
+
+bch -help: 帮助
+bch -v: 查看版本号
+bch -clear: 清楚缓存
+
+-m 利用输入文件匹配
+bch -m file1 file2 -r [-o/-l] [-n number] [-t/-s] file3
+以 file3 生成的输入文件对 file1 和 file2 进行对拍
+bch -m file1 file2 -rf [-o/-l] [-n number] [-t/-s] file3 file4
+以 file4 作为 file3 的输入生成输入文件对 file1 和 file2 进行对拍
+bch -m file1 file2 -fo [-o/-l] folder
+以 folder 下的所有输入文件对 file1 和 file2 进行对拍
+bch -m file1 file2 -fi [-o/-l] file3
+将要以 file3 作为输入文件对 file1 和 file2 进行对拍
