@@ -6,6 +6,7 @@
 #include <time.h>
 #include <windows.h>
 #include <map>
+typedef double db;
 using namespace std;
 class ini_file {
 public:
@@ -114,7 +115,63 @@ void help() {
         cout << t << endl;
     in.close();
 }
-void version() { printf("match 1.1.0"); }
+int ac, wa, tle, mle;
+db ti;
+clock_t start, ed;
+void diff(string s1, string s2) {
+    ifstream in1(s1);
+    ifstream in2(s2);
+    string out, ans;
+    int cnt = 0;
+    while (in2 >> ans) {
+        cnt++;
+        if (in1.good())
+            in1 >> out;
+        else {
+            if (ans != "") {
+                printf("\033[1;31mWA\033[0m\ntoo short\n"), wa++;
+                return;
+            }
+            while (in2 >> ans)
+                if (ans != "") {
+                    printf("\033[1;31mWA\033[0m\ntoo short\n"), wa++;
+                    return;
+                }
+        }
+        if (out != ans) {
+            printf("\033[1;31mWA\033[0m\n"), wa++;
+            printf("行数: %d\n", cnt);
+            cout << "输出: " << out << endl;
+            cout << "答案: " << ans << endl;
+            return;
+        }
+        out = ans = "";
+    }
+    while (in1 >> out)
+        if (out != "") {
+            printf("\033[1;31mWA\033[0m\ntoo much\n"), wa++;
+            return;
+        }
+    printf("\033[1;32mAC\033[0m\n");
+    ac++;
+    return;
+}
+void total(int x) {
+    printf("共计:\n");
+    if (ac != 0) printf("\033[1;32mAC:\033[0m %d\n", ac);
+    if (wa != 0) printf("\033[1;31mWA:\033[0m %d\n", wa);
+    if (tle != 0) printf("\033[1;33mTLE:\033[0m %d\n", tle);
+    if (mle != 0) printf("\033[1;34mMLE:\033[0m %d\n", mle);
+    printf("平均时间: %lf\n", ti / x);
+    printf("总时间: %lf\n", ti);
+    printf("----------------------------\n");
+}
+double te() {
+    double time = ((db)(ed) - (db)(start)) / CLOCKS_PER_SEC;
+    if (time > 10) return -1;
+    return time;
+}
+void version() { printf("match 1.2.0"); }
 int main(int argc, char **argv) {
     prepare();
     ifstream in;
@@ -184,18 +241,30 @@ int main(int argc, char **argv) {
                 printf("是否进行编号: %s\n", (generate_mode) ? "true" : "false");
                 printf("对拍次数: %d\n", times);
                 printf("----------------------------\n");
+                printf("\n----对拍结果----\n");
                 for (int i = 1; i <= times; i++) {
                     char *t = new char[105], j[105];
                     strcpy(j, (generate_mode == 1) ? int_char(i).c_str() : "");
-                    sprintf(t, "%s.exe > %s\\%s%s.in", file3, in_path.c_str(), file3, j);
-                    system(t);
+                    sprintf(t, "%s.exe > %s\\%s%s.in", file3, in_path.c_str(), file3, j), system(t);
+                    sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file1), system(t);
                     sprintf(t, "%s.exe < %s\\%s%s.in > %s\\%s%s.out", file1, in_path.c_str(), file3, j, out_path.c_str(), file1, j);
+                    start = clock();
                     system(t);
-                    sprintf(t, "%s.exe < %s\\%s%s.in > %s\\%s%s.out", file2, in_path.c_str(), file3, j, out_path.c_str(), file2, j);
-                    system(t);
-                    sprintf(t, "fc %s\\%s%s.out %s\\%s%s.out", in_path.c_str(), file1, j, out_path.c_str(), file2, j);
-                    system(t);
+                    ed = clock();
+                    system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                    sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file2), system(t);
+                    sprintf(t, "%s.exe < %s\\%s%s.in > %s\\%s%s.out", file2, in_path.c_str(), file3, j, out_path.c_str(), file2, j), system(t);
+                    system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                    string out = in_path + "\\" + file1 + j + ".out", ans = out_path + "\\" + file2 + j + ".out";
+                    printf("测试点 %d:\n", i);
+                    if (te() == -1)
+                        printf("\033[1;33mTLE\033[0m\n");
+                    else
+                        diff(out, ans);
+                    printf("时间: %lf\n", te()), ti += te();
+                    printf("---\n");
                 }
+                total(times);
                 break;
             case 2:
                 printf("将要以%s作为%s的输入生成输入文件对%s和%s进行对拍\n", file4, file3, file1, file2);
@@ -204,18 +273,30 @@ int main(int argc, char **argv) {
                 printf("是否进行编号: %s\n", (generate_mode) ? "true" : "false");
                 printf("对拍次数: %d\n", times);
                 printf("----------------------------\n");
+                printf("\n----对拍结果----\n");
                 for (int i = 1; i <= times; i++) {
                     char *t = new char[105], j[105];
                     strcpy(j, (generate_mode == 1) ? int_char(i).c_str() : "");
-                    sprintf(t, "%s.exe < %s.in > %s\\%s%s.in", file3, file4, in_path.c_str(), file3, j);
-                    system(t);
+                    sprintf(t, "%s.exe < %s.in > %s\\%s%s.in", file3, file4, in_path.c_str(), file3, j), system(t);
+                    sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file1), system(t);
                     sprintf(t, "%s.exe < %s\\%s%s.in > %s\\%s%s.out", file1, in_path.c_str(), file3, j, out_path.c_str(), file1, j);
+                    start = clock();
                     system(t);
-                    sprintf(t, "%s.exe < %s\\%s%s.in > %s\\%s%s.out", file2, in_path.c_str(), file3, j, out_path.c_str(), file2, j);
-                    system(t);
-                    sprintf(t, "fc %s\\%s%s.out %s\\%s%s.out", in_path.c_str(), file1, j, out_path.c_str(), file2, j);
-                    system(t);
+                    ed = clock();
+                    system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                    sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file2), system(t);
+                    sprintf(t, "%s.exe < %s\\%s%s.in > %s\\%s%s.out", file2, in_path.c_str(), file3, j, out_path.c_str(), file2, j), system(t);
+                    system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                    string out = in_path + "\\" + file1 + j + ".out", ans = out_path + "\\" + file2 + j + ".out";
+                    printf("测试点 %d:\n", i);
+                    if (te() == -1)
+                        printf("\033[1;33mTLE\033[0m\n");
+                    else
+                        diff(out, ans);
+                    printf("时间: %lf\n", te()), ti += te();
+                    printf("---\n");
                 }
+                total(times);
                 break;
             case 3:
                 printf("将要以%s下的所有输入文件对%s和%s进行对拍\n", folder, file1, file2);
@@ -223,6 +304,7 @@ int main(int argc, char **argv) {
                 printf("生成位置: %s\n", (generate_location) ? "local" : "online");
                 printf("是否进行编号: %s\n", (generate_mode) ? "true" : "false");
                 printf("----------------------------\n");
+                printf("\n----对拍结果----\n");
                 char t[1005];
                 sprintf(t, "dir /b %s > %s\\in_name.txt", folder, folder);
                 system(t);
@@ -234,25 +316,50 @@ int main(int argc, char **argv) {
                     cout << inname << endl;
                     char j[105];
                     strcpy(j, int_char(++cnt).c_str());
+                    sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file1), system(t);
                     sprintf(t, "%s.exe < %s\\%s > %s\\%s%s.out", file1, folder, inname.c_str(), out_path.c_str(), file1, j);
+                    start = clock();
                     system(t);
-                    sprintf(t, "%s.exe < %s\\%s > %s\\%s%s.out", file2, folder, inname.c_str(), out_path.c_str(), file2, j);
-                    system(t);
-                    sprintf(t, "fc %s\\%s%s.out %s\\%s%s.out", out_path.c_str(), file1, j, out_path.c_str(), file2, j);
-                    system(t);
+                    ed = clock();
+                    system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                    sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file2), system(t);
+                    sprintf(t, "%s.exe < %s\\%s > %s\\%s%s.out", file2, folder, inname.c_str(), out_path.c_str(), file2, j), system(t);
+                    system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                    string out = in_path + "\\" + file1 + j + ".out", ans = out_path + "\\" + file2 + j + ".out";
+                    printf("测试点 %d:\n", cnt);
+                    if (te() == -1)
+                        printf("\033[1;33mTLE\033[0m\n");
+                    else
+                        diff(out, ans);
+                    printf("时间: %lf\n", te()), ti += te();
+                    printf("---\n");
                 }
+                total(cnt);
                 break;
             case 4:
                 printf("将要以%s作为输入文件对%s和%s进行对拍\n", file3, file1, file2);
                 printf("\n----对拍信息----\n");
                 printf("生成位置: %s\n", (generate_location) ? "local" : "online");
                 printf("----------------------------\n");
+                sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file1), system(t);
                 sprintf(t, "%s.exe < %s.in > %s\\%s.out", file1, file3, out_path.c_str(), file1);
+                start = clock();
                 system(t);
-                sprintf(t, "%s.exe < %s.in > %s\\%s.out", file2, file3, out_path.c_str(), file2);
-                system(t);
-                sprintf(t, "fc %s\\%s.out %s\\%s.out", out_path.c_str(), file1, out_path.c_str(), file2);
-                system(t);
+                ed = clock();
+                system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file2), system(t);
+                sprintf(t, "%s.exe < %s.in > %s\\%s.out", file2, file3, out_path.c_str(), file2), system(t);
+                system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                printf("\n----对拍结果----\n");
+                printf("测试点 1:\n");
+                string out = in_path + "\\" + file1 + ".out", ans = out_path + "\\" + file2 + ".out";
+                if (te() == -1)
+                    printf("\033[1;33mTLE\033[0m\n");
+                else
+                    diff(out, ans);
+                printf("时间: %lf\n", te()), ti += te();
+                printf("---\n");
+                total(1);
                 break;
         }
     } else if (ins == "-mf") {
@@ -298,28 +405,38 @@ int main(int argc, char **argv) {
             printf("生成位置: %s\n", (generate_location) ? "local" : "online");
             printf("是否进行编号: %s\n", (generate_mode) ? "true" : "false");
             printf("----------------------------\n");
-
+            printf("\n----对拍结果----\n");
             char t[1005];
             sprintf(t, "dir /b %s > %s\\in_name.txt", folder, folder);
             system(t);
             sprintf(t, "%s\\%s\\in_name.txt", work_path.c_str(), folder);
             in.open(t);
+            int cnt = 0;
             while (in >> inname) {
                 if (inname.find(".in") == -1) continue;
-                cout << inname << endl;
+                cnt++;
                 char j[105];
                 if (generate_mode == 1)
                     strcpy(j, inname.substr(inname.find("_"), inname.find(".in") - inname.find("_")).c_str());
                 else
                     strcpy(j, "");
+                sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file1), system(t);
                 sprintf(t, "%s.exe < %s\\%s > %s\\%s%s.out", file1, folder, inname.c_str(), out_path.c_str(), file1, j);
+                start = clock();
                 system(t);
-                sprintf(t, "fc %s\\%s%s.out %s\\%s%s.ans", out_path.c_str(), file1, j, in_path.c_str(), file1, j);
-                system(t);
+                ed = clock();
+                system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+                string out = out_path + "\\" + file1 + j + ".out", ans = in_path + "\\" + file1 + j + ".ans";
+                printf("测试点 %d:\n", cnt);
+                if (te() == -1)
+                    printf("\033[1;33mTLE\033[0m\n");
+                else
+                    diff(out, ans);
+                printf("时间: %lf\n", te()), ti += te();
+                printf("---\n");
             }
+            total(cnt);
         } else {
-            string inname;
-
             if (generate_location == 0) {
                 string fol = exe_path + "\\data";
                 if (_access(fol.c_str(), 0) == -1) _mkdir(fol.c_str());
@@ -336,10 +453,22 @@ int main(int argc, char **argv) {
             printf("----------------------------\n");
 
             char t[1005];
+            sprintf(t, "start \"timekill\" timekill.exe 1 %s.exe", file1), system(t);
             sprintf(t, "%s.exe < %s > %s\\%s.out", file1, file_in, out_path.c_str(), file1);
+            start = clock();
             system(t);
-            sprintf(t, "fc %s\\%s.out %s", out_path.c_str(), file1, file_out);
-            system(t);
+            ed = clock();
+            system("taskkill>nul 2>nul /f /t /fi \"WINDOWTITLE eq timekill\"");
+            string out = out_path + "\\" + file1 + ".out", ans = file_out;
+            printf("\n----对拍结果----\n");
+            printf("测试点 1:\n");
+            if (te() == -1)
+                printf("\033[1;33mTLE\033[0m\n");
+            else
+                diff(out, ans);
+            printf("时间: %lf\n", te()), ti += te();
+            printf("---\n");
+            total(1);
         }
     }
 }
