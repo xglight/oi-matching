@@ -74,9 +74,9 @@ void set_ini() {
     strcpy(name, "generate_mode");
     generate_mode = ini.find_ini_val(ini_path, info, name);
 }
-int char_int(char *c) {
+int char_int(string c) {
     int r = 0;
-    for (int i = 0; i < strlen(c); i++)
+    for (int i = 0; i < c.size(); i++)
         r = r * 10 + (c[i] - '0');
     return r;
 }
@@ -114,7 +114,7 @@ void help() {
         cout << t << endl;
     in.close();
 }
-void version() { printf("match 1.0.0"); }
+void version() { printf("match 1.1.0"); }
 int main(int argc, char **argv) {
     prepare();
     ifstream in;
@@ -178,11 +178,11 @@ int main(int argc, char **argv) {
         string inname;
         switch (mode) {
             case 1:
-                printf("å°†è¦ä»¥%sç”Ÿæˆçš„è¾“å…¥æ–‡ä»¶å¯¹%så’Œ%sè¿›è¡Œå¯¹æ‹\n", file3, file1, file2);
-                printf("\n----å¯¹æ‹ä¿¡æ¯----\n");
-                printf("ç”Ÿæˆä½ç½®: %s\n", (generate_location) ? "local" : "online");
-                printf("æ˜¯å¦è¿›è¡Œç¼–å·: %s\n", (generate_mode) ? "true" : "false");
-                printf("å¯¹æ‹æ¬¡æ•°: %d\n", times);
+                printf("½«ÒªÒÔ%sÉú³ÉµÄÊäÈëÎÄ¼ş%sºÍ%s½øĞĞ¶ÔÅÄ\n", file3, file1, file2);
+                printf("\n----¶ÔÅÄĞÅÏ¢----\n");
+                printf("Éú³ÉÎ»ÖÃ: %s\n", (generate_location) ? "local" : "online");
+                printf("ÊÇ·ñ½øĞĞ±àºÅ: %s\n", (generate_mode) ? "true" : "false");
+                printf("¶ÔÅÄ´ÎÊı: %d\n", times);
                 printf("----------------------------\n");
                 for (int i = 1; i <= times; i++) {
                     char *t = new char[105], j[105];
@@ -198,11 +198,11 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 2:
-                printf("å°†è¦ä»¥%sä½œä¸º%sçš„è¾“å…¥ç”Ÿæˆè¾“å…¥æ–‡ä»¶å¯¹%så’Œ%sè¿›è¡Œå¯¹æ‹\n", file4, file3, file1, file2);
-                printf("\n----å¯¹æ‹ä¿¡æ¯----\n");
-                printf("ç”Ÿæˆä½ç½®: %s\n", (generate_location) ? "local" : "online");
-                printf("æ˜¯å¦è¿›è¡Œç¼–å·: %s\n", (generate_mode) ? "true" : "false");
-                printf("å¯¹æ‹æ¬¡æ•°: %d\n", times);
+                printf("½«ÒªÒÔ%s×÷Îª%sµÄÊäÈëÉú³ÉÊäÈëÎÄ¼ş¶Ô%sºÍ%s½øĞĞ¶ÔÅÄ\n", file4, file3, file1, file2);
+                printf("\n----¶ÔÅÄĞÅÏ¢----\n");
+                printf("Éú³ÉÎ»ÖÃ: %s\n", (generate_location) ? "local" : "online");
+                printf("ÊÇ·ñ½øĞĞ±àºÅ: %s\n", (generate_mode) ? "true" : "false");
+                printf("¶ÔÅÄ´ÎÊı: %d\n", times);
                 printf("----------------------------\n");
                 for (int i = 1; i <= times; i++) {
                     char *t = new char[105], j[105];
@@ -218,10 +218,10 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 3:
-                printf("å°†è¦ä»¥%sä¸‹çš„æ‰€æœ‰è¾“å…¥æ–‡ä»¶å¯¹%så’Œ%sè¿›è¡Œå¯¹æ‹\n", folder, file1, file2);
-                printf("\n----å¯¹æ‹ä¿¡æ¯----\n");
-                printf("ç”Ÿæˆä½ç½®: %s\n", (generate_location) ? "local" : "online");
-                printf("æ˜¯å¦è¿›è¡Œç¼–å·: %s\n", (generate_mode) ? "true" : "false");
+                printf("½«ÒªÒÔ%sÏÂµÄËùÓĞÊäÈëÎÄ¼ş¶Ô%sºÍ%s½øĞĞ¶ÔÅÄ\n", folder, file1, file2);
+                printf("\n----¶ÔÅÄĞÅÏ¢----\n");
+                printf("Éú³ÉÎ»ÖÃ: %s\n", (generate_location) ? "local" : "online");
+                printf("ÊÇ·ñ½øĞĞ±àºÅ: %s\n", (generate_mode) ? "true" : "false");
                 printf("----------------------------\n");
                 char t[1005];
                 sprintf(t, "dir /b %s > %s\\in_name.txt", folder, folder);
@@ -243,9 +243,9 @@ int main(int argc, char **argv) {
                 }
                 break;
             case 4:
-                printf("å°†è¦ä»¥%sä½œä¸ºè¾“å…¥æ–‡ä»¶å¯¹%så’Œ%sè¿›è¡Œå¯¹æ‹\n", file3, file1, file2);
-                printf("\n----å¯¹æ‹ä¿¡æ¯----\n");
-                printf("ç”Ÿæˆä½ç½®: %s\n", (generate_location) ? "local" : "online");
+                printf("½«ÒªÒÔ%s×÷ÎªÊäÈëÎÄ¼ş¶Ô%sºÍ%s½øĞĞ¶ÔÅÄ\n", file3, file1, file2);
+                printf("\n----¶ÔÅÄĞÅÏ¢----\n");
+                printf("Éú³ÉÎ»ÖÃ: %s\n", (generate_location) ? "local" : "online");
                 printf("----------------------------\n");
                 sprintf(t, "%s.exe < %s.in > %s\\%s.out", file1, file3, out_path.c_str(), file1);
                 system(t);
@@ -256,5 +256,90 @@ int main(int argc, char **argv) {
                 break;
         }
     } else if (ins == "-mf") {
+        char *file1 = argv[2], *file_in = NULL, *file_out = NULL;
+        char *folder = NULL;
+        int t = 3;
+        while (argv[t] != NULL) {
+            if (strcmp(argv[t], "-o") == 0)
+                generate_location = 0;
+            else if (strcmp(argv[t], "-l") == 0)
+                generate_location = 1;
+            else if (strcmp(argv[t], "-t") == 0)
+                generate_mode = 0;
+            else if (strcmp(argv[t], "-s") == 0)
+                generate_mode = 1;
+            else {
+                if (file_in == NULL)
+                    file_in = argv[t];
+                else
+                    file_out = argv[t];
+            }
+            t++;
+        }
+
+        if (file_out == NULL) {
+            string inname;
+            folder = file_in;
+
+            if (generate_location == 0) {
+                string fol = exe_path + "\\data";
+                if (_access(fol.c_str(), 0) == -1) _mkdir(fol.c_str());
+                out_path = work_path + "\\" + folder;
+                in_path = work_path + "\\" + folder;
+            } else {
+                string fol = work_path + "\\data";
+                if (_access(fol.c_str(), 0) == -1) _mkdir(fol.c_str());
+                out_path = fol;
+                in_path = work_path + "\\" + folder;
+            }
+
+            printf("½«ÒªÒÔ%sÏÂµÄËùÓĞÊäÈëºÍ´ğ°¸ÎÄ¼ş¶Ô%s½øĞĞ¶ÔÅÄ\n", folder, file1);
+            printf("\n----¶ÔÅÄĞÅÏ¢----\n");
+            printf("Éú³ÉÎ»ÖÃ: %s\n", (generate_location) ? "local" : "online");
+            printf("ÊÇ·ñ½øĞĞ±àºÅ: %s\n", (generate_mode) ? "true" : "false");
+            printf("----------------------------\n");
+
+            char t[1005];
+            sprintf(t, "dir /b %s > %s\\in_name.txt", folder, folder);
+            system(t);
+            sprintf(t, "%s\\%s\\in_name.txt", work_path.c_str(), folder);
+            in.open(t);
+            while (in >> inname) {
+                if (inname.find(".in") == -1) continue;
+                cout << inname << endl;
+                char j[105];
+                if (generate_mode == 1)
+                    strcpy(j, inname.substr(inname.find("_"), inname.find(".in") - inname.find("_")).c_str());
+                else
+                    strcpy(j, "");
+                sprintf(t, "%s.exe < %s\\%s > %s\\%s%s.out", file1, folder, inname.c_str(), out_path.c_str(), file1, j);
+                system(t);
+                sprintf(t, "fc %s\\%s%s.out %s\\%s%s.ans", out_path.c_str(), file1, j, in_path.c_str(), file1, j);
+                system(t);
+            }
+        } else {
+            string inname;
+
+            if (generate_location == 0) {
+                string fol = exe_path + "\\data";
+                if (_access(fol.c_str(), 0) == -1) _mkdir(fol.c_str());
+                out_path = fol;
+            } else {
+                string fol = work_path + "\\data";
+                if (_access(fol.c_str(), 0) == -1) _mkdir(fol.c_str());
+                out_path = fol;
+            }
+
+            printf("½«ÒªÒÔ%sºÍ%s·Ö±ğ×÷ÎªÊäÈëºÍ´ğ°¸ÎÄ¼ş¶Ô%s½øĞĞ¶ÔÅÄ\n", file_in, file_out, file1);
+            printf("\n----¶ÔÅÄĞÅÏ¢----\n");
+            printf("Éú³ÉÎ»ÖÃ: %s\n", (generate_location) ? "local" : "online");
+            printf("----------------------------\n");
+
+            char t[1005];
+            sprintf(t, "%s.exe < %s > %s\\%s.out", file1, file_in, out_path.c_str(), file1);
+            system(t);
+            sprintf(t, "fc %s\\%s.out %s", out_path.c_str(), file1, file_out);
+            system(t);
+        }
     }
 }
